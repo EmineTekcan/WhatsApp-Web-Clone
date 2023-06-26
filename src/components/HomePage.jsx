@@ -36,6 +36,10 @@ const HomePage = () => {
     setIsProfile(true);
   }
 
+  const handleCloseOpenProfile = () => {
+    setIsProfile(false);
+  }
+
   return (
     <div className='relative bg-slate-400'>
       <div className=' py-14 bg-[#00a884]  w-full '>
@@ -46,54 +50,60 @@ const HomePage = () => {
         {/* Left section */}
         <div className='left-0 w-[30%] h-full bg-[#e8e9ec]'>
 
-          <div className='w-full'>
+          {/* Profile Section */}
+          {
+            isProfile && <Profile handleCloseOpenProfile={handleCloseOpenProfile} />
+          }
 
-            {/* Profile Section */}
-            {
-              isProfile && <Profile />
-            }
+          {
+            !isProfile && <div className='w-full'>
 
-            {/* Left Header section */}
-            {
-              !isProfile && <div className='flex justify-between it p-3'>
-                <div
-                  onClick={handleNavigate}
-                  className='flex items-center space-x-3 justify-center'>
-                  <img
-                    className='rounded-full w-10 h-10 cursor-pointer'
-                    src='https://cdn.pixabay.com/photo/2023/06/12/12/04/duck-8058344_1280.jpg'
-                    alt='Progile image'
+
+              {/* Left Header section */}
+              {
+                <div className='flex justify-between it p-3'>
+                  <div
+                    className='flex items-center space-x-3 justify-center'>
+                    <img
+                      onClick={handleNavigate}
+                      className='rounded-full w-10 h-10 cursor-pointer'
+                      src='https://cdn.pixabay.com/photo/2023/06/12/12/04/duck-8058344_1280.jpg'
+                      alt='Progile image'
+                    />
+                    <p>username</p>
+                  </div>
+                  <div className='space-x-3 text-2xl flex self-center'>
+                    <TbCircleDashed
+                      className='cursor-pointer'
+                      size={20}
+                      onClick={() => navigate("/status")}
+                    />
+                    <BiCommentDetail size={20} />
+                  </div>
+                </div>
+              }
+
+              {/* Left Input section */}
+              <div className='relative flex justify-center items-center bg-white py-4 px-3'>
+                <div className='flex flex-row text-xs lg:text-base bg-slate-200 rounded-md w-[93%] pl-2 py-2' >
+                  <AiOutlineSearch size={20} />
+                  <input
+                    value={queries}
+                    className='bg-slate-200  border-none outline-none pl-2'
+                    type='text'
+                    placeholder='Search or start new chat'
+                    onChange={(e) => {
+                      setQueries(e.target.value);
+                      handleSearch(e.target.value);
+                    }}
                   />
-                  <p>username</p>
                 </div>
-                <div className='space-x-3 text-2xl flex self-center'>
-                  <TbCircleDashed size={25} />
-                  <BiCommentDetail size={25} />
+                <div className='ml-2'>
+                  <BsFilter size={25} />
                 </div>
               </div>
-            }
 
-            {/* Left Input section */}
-            <div className='relative flex justify-center items-center bg-white py-4 px-3'>
-              <div className='flex flex-row text-xs lg:text-base bg-slate-200 rounded-md w-[93%] pl-2 py-2' >
-                <AiOutlineSearch size={20} />
-                <input
-                  value={queries}
-                  className='bg-slate-200  border-none outline-none pl-2'
-                  type='text'
-                  placeholder='Search or start new chat'
-                  onChange={(e) => {
-                    setQueries(e.target.value);
-                    handleSearch(e.target.value);
-                  }}
-                />
-              </div>
-              <div className='ml-2'>
-                <BsFilter size={25} />
-              </div>
-            </div>
-
-          </div>
+            </div>}
 
           {/* All Users Messages section */}
           <div className='bg-white overflow-y-scroll h-[76.8v]'>
