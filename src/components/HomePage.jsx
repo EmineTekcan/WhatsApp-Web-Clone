@@ -11,6 +11,8 @@ import { IoSendSharp } from 'react-icons/io5'
 import './HomePage.css'
 import { useNavigate } from 'react-router-dom'
 import Profile from './Profile/Profile'
+import { Menu, MenuItem } from '@mui/material'
+import CreateGroup from './Group/CreateGroup'
 
 const HomePage = () => {
 
@@ -18,7 +20,17 @@ const HomePage = () => {
   const [currentChat, setCurrentChat] = useState(false);
   const [messageContent, setMessageContent] = useState("");
   const [isProfile, setIsProfile] = useState(false)
+  const [isGroup,setIsGroup]=useState(false)
   const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleSearch = () => {
 
@@ -40,6 +52,10 @@ const HomePage = () => {
     setIsProfile(false);
   }
 
+  const handleCreateGroup=()=>{
+    setIsGroup(!isGroup)
+  }
+
   return (
     <div className='relative bg-slate-400'>
       <div className=' py-14 bg-[#00a884]  w-full '>
@@ -51,12 +67,14 @@ const HomePage = () => {
         <div className='left-0 w-[30%] h-full bg-[#e8e9ec]'>
 
           {/* Profile Section */}
+
+          {isGroup && <CreateGroup />}
           {
-            isProfile && <Profile handleCloseOpenProfile={handleCloseOpenProfile} />
+            isProfile && !isGroup && <Profile handleCloseOpenProfile={handleCloseOpenProfile} />
           }
 
           {
-            !isProfile && <div className='w-full'>
+            !isProfile && !isGroup && <div className='w-full'>
 
 
               {/* Left Header section */}
@@ -78,7 +96,33 @@ const HomePage = () => {
                       size={20}
                       onClick={() => navigate("/status")}
                     />
-                    <BiCommentDetail size={20} />
+                    <BiCommentDetail
+                      className='cursor-pointer'
+                      size={20} />
+                    <div>
+                      <BsThreeDotsVertical
+                        className='cursor-pointer'
+                        size={20}
+                        id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
+                      />
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          'aria-labelledby': 'basic-button',
+                        }}
+                      >
+                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleCreateGroup}>Create Group</MenuItem>
+                        <MenuItem onClick={handleClose}>Logout</MenuItem>
+                      </Menu>
+                    </div>
                   </div>
                 </div>
               }
@@ -106,14 +150,14 @@ const HomePage = () => {
             </div>}
 
           {/* All Users Messages section */}
-          <div className='bg-white overflow-y-scroll h-[76.8v]'>
+          {!isProfile && !isGroup && <div className='bg-white overflow-y-scroll h-[76.8v]'>
             {queries && [1, 1, 1, 1].map((item) =>
               <div onClick={handleClickChatCard}>
                 <hr />
                 <ChatCard />
               </div>
             )}
-          </div>
+          </div>}
 
         </div>
 
