@@ -1,7 +1,14 @@
-import { configureStore } from '@reduxjs/toolkit'
-import thunkMiddleware from 'redux-thunk';
+import CurrentUserSlice from "./Auth/CurrentUserSlice";
+import LoginSlice from "./Auth/LoginSlice";
+import RegisterSlice from "./Auth/RegisterSlice";
+import { configureStore } from "@reduxjs/toolkit";
 
-export const store = configureStore({
-  reducer: {},
-  middleware: [thunkMiddleware],
+const store=configureStore({
+    reducer:{
+        register:RegisterSlice,
+        login:LoginSlice,
+        currentUser:CurrentUserSlice
+    }
 })
+
+export default store

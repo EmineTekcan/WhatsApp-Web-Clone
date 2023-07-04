@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TbCircleDashed } from 'react-icons/tb'
 import { BiCommentDetail } from 'react-icons/bi'
 import { AiOutlineSearch } from 'react-icons/ai'
@@ -13,15 +13,23 @@ import { useNavigate } from 'react-router-dom'
 import Profile from './Profile/Profile'
 import { Menu, MenuItem } from '@mui/material'
 import CreateGroup from './Group/CreateGroup'
+import { useDispatch, useSelector } from 'react-redux'
+import { currentUser } from '../redux/Auth/Action'
+import axios from 'axios'
 
 const HomePage = () => {
 
+
+  const [name,setName]=useState()
   const [queries, setQueries] = useState("");
   const [currentChat, setCurrentChat] = useState(false);
   const [messageContent, setMessageContent] = useState("");
   const [isProfile, setIsProfile] = useState(false)
-  const [isGroup,setIsGroup]=useState(false)
+  const [isGroup, setIsGroup] = useState(false)
+  const token = localStorage.getItem("token")
+  const dispatch = useDispatch()
   const navigate = useNavigate();
+
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -35,6 +43,33 @@ const HomePage = () => {
   const handleSearch = () => {
 
   }
+
+
+  const getCurrentUser = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Hata:", error);
+      return null;
+    }
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getCurrentUser();
+      if (data) {
+        setName(data.full_name)
+      } else {
+        navigate("/signin");
+      }
+    };
+    fetchData();
+  }, [token]);
 
   const handleCreateMessage = () => {
 
@@ -52,8 +87,13 @@ const HomePage = () => {
     setIsProfile(false);
   }
 
-  const handleCreateGroup=()=>{
+  const handleCreateGroup = () => {
     setIsGroup(!isGroup)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    navigate("/signin")
   }
 
   return (
@@ -88,7 +128,7 @@ const HomePage = () => {
                       src='https://cdn.pixabay.com/photo/2023/06/12/12/04/duck-8058344_1280.jpg'
                       alt='Progile image'
                     />
-                    <p>username</p>
+                    <p>{name}</p>
                   </div>
                   <div className='space-x-3 text-2xl flex self-center'>
                     <TbCircleDashed
@@ -120,7 +160,7 @@ const HomePage = () => {
                       >
                         <MenuItem onClick={handleClose}>Profile</MenuItem>
                         <MenuItem onClick={handleCreateGroup}>Create Group</MenuItem>
-                        <MenuItem onClick={handleClose}>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                     </div>
                   </div>

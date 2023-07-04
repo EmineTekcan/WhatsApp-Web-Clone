@@ -1,66 +1,98 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { BASE_API_URL } from '../../config/api';
+import { BASE_API_URL } from "../../config/api"
+import { REGISTER, LOGIN, REQ_USER, SEARCH_USER, UPDATE_USER } from './ActionType'
 
-export const register = createAsyncThunk("REGISTER", async (requestData) => {
+export const register = (data) => async (dispatch) => {
     try {
-        const response = await axios.post(`${BASE_API_URL}auth/signup`, JSON.stringify(requestData), {
+        const res = await fetch(`${BASE_API_URL}/auth/signup`, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': "application/json"
             },
-        });
+            body: JSON.stringify(data)
+        })
 
-        const user = await response.data;
+        const resData = await res.json();
+        dispatch({ type: REGISTER, payload: resData })
+        console.log("register", resData)
     } catch (error) {
-        console.log(error);
-        throw error;
+        console.log("error " + error)
     }
-})
+}
 
-export const login = createAsyncThunk("LOGIN", async (requestData) => {
+export const login = (data) => async (dispatch) => {
     try {
-        const response = await axios.post(`${BASE_API_URL}auth/signin`, JSON.stringify(requestData), {
+        const res = await fetch(`${BASE_API_URL}/auth/signin`, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': "application/json"
             },
-        });
+            body: JSON.stringify(data)
+        })
 
-        const user = await response.data;
+        const resData = await res.json();
+        dispatch({ type: LOGIN, payload: resData })
+        console.log("login", resData)
     } catch (error) {
-        console.log(error);
-        throw error;
+        console.log("error " + error)
     }
-})
+}
 
-
-export const currentUser = createAsyncThunk("REQ_USER", async (token) => {
+export const currentUser = (token) => async (dispatch) => {
     try {
-        const response = await axios.get(`${BASE_API_URL}users/profile`, {
+        const res = await fetch(`${BASE_API_URL}/api/users/profile`, {
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': "application/json",
                 Authorization: `Bearer ${token}`
             },
-        });
+        })
 
-        const user = await response.data;
+        const resData = await res.json();
+        dispatch({ type: REQ_USER, payload: resData })
+        console.log("curent user", resData)
     } catch (error) {
-        console.log(error);
-        throw error;
+        console.log("error " + error)
     }
-})
+}
 
-export const searchUser = createAsyncThunk("SEARCH_USER", async (data) => {
+export const searchUser = (data) => async (dispatch) => {
     try {
-        const response = await axios.get(`${BASE_API_URL}users/search?name=${data.keyword}`, {
+        const res = await fetch(`${BASE_API_URL}/api/users/search?name=${data.keyword}`, {
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': "application/json",
                 Authorization: `Bearer ${data.token}`
             },
-        });
+            body: JSON.stringify(data)
+        })
 
-        const user = await response.data;
+        const resData = await res.json();
+        dispatch({ type: SEARCH_USER, payload: resData })
+        console.log("search user", resData)
     } catch (error) {
-        console.log(error);
-        throw error;
+        console.log("error " + error)
     }
-})
+}
+
+export const updateUser = (data) => async (dispatch) => {
+    try {
+        const res = await fetch(`${BASE_API_URL}/api/users/update/${data.id}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': "application/json",
+                Authorization: `Bearer ${data.token}`
+            },
+            body: JSON.stringify(data)
+        })
+
+        const resData = await res.json();
+
+        if (resData.jwt)
+            localStorage.setItem("token", resData.jwt)
+
+        dispatch({ type: UPDATE_USER, payload: resData })
+        console.log("update user", resData)
+    } catch (error) {
+        console.log("error " + error)
+    }
+}

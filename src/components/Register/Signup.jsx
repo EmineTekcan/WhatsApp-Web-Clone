@@ -1,13 +1,16 @@
-import { Alert, Button, IconButton, Snackbar } from '@mui/material'
-import React, { useState } from 'react'
+import { Alert, Button, Snackbar } from '@mui/material'
+import React, {  useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import CloseIcon from '@mui/material/Icon';
+import { register } from '../../redux/Auth/RegisterSlice'
 
 const Signup = () => {
 
     const [inputData, setInputData] = useState({ full_name: "", email: "", password: "" })
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
+    const dispatch = useDispatch();
+
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -16,9 +19,10 @@ const Signup = () => {
 
         setOpen(false);
     };
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    const handleSubmit = () => {
+        dispatch(register(inputData))
         setOpen(true);
+        navigate("/signin")
     }
 
     const handleChange = (e) => {
@@ -36,6 +40,7 @@ const Signup = () => {
                         <div>
                             <p className='mb-2'>Full Name</p>
                             <input
+                                name="full_name"
                                 placeholder='Enter username'
                                 onChange={handleChange}
                                 type='text'
@@ -45,6 +50,7 @@ const Signup = () => {
                         <div>
                             <p className='mb-2'>Email</p>
                             <input
+                                name="email"
                                 placeholder='Enter your Email'
                                 onChange={handleChange}
                                 type='text'
@@ -54,6 +60,7 @@ const Signup = () => {
                         <div>
                             <p className='mb-2'>Password</p>
                             <input
+                                name="password"
                                 placeholder='Enter your Password'
                                 onChange={handleChange}
                                 type='text'
